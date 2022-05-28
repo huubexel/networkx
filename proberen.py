@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Open file (straight from NodeXL)
 # import -> from search twitter network -> export edges page as csv
 
-filepath = './csgo2000.csv'
+filepath = './csgo100.csv'
 
 df = pd.read_csv(filepath, delimiter=',',
                 skiprows=1, # skips the first line of the file
@@ -15,7 +15,6 @@ df = pd.read_csv(filepath, delimiter=',',
 df.columns = ['source_user', 'mentioned_user', 'tweet_text']
 
 # create network graph (G)
-
 G = nx.DiGraph()
 
 for source_user, mentioned_user in zip(df.source_user, df.mentioned_user):
