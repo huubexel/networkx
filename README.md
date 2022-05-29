@@ -1,7 +1,7 @@
 # networkx combined with NodeXL
 networkx combined with NodeXL Excel program
 
-# Things to watch out for:
+## Things to watch out for:
 - Make sure that the delimiter of the Excel version you use is a comma,
 not a semicolon. Otherwise, pandas will not be able to read the code.
 
@@ -40,5 +40,10 @@ If the Graph does not include 'Multi', it means that it is not possible to have
 multiple connections (lines) between the 2 nodes. So there will be just one connection
 (line) between the 2 nodes.
 
+
+### What Graph are we using?
+We will be using a DiGraph, why? Because we do not allow for more than one connection
+(line) between two nodes, but the connections between the nodes are directional from
+one node to another, so there is an arrow pointing from one node to another.
 
 
