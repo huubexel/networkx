@@ -39,6 +39,7 @@ betweenness = nx.betweenness_centrality(G)
 # Calculate closeness
 closeness = nx.closeness_centrality(G)
 
+# Add the spring layout
 pos = nx.spring_layout(G)
 
 options = {
@@ -51,8 +52,9 @@ options = {
 }
 
 # You need to figure the figsize before you draw the network
-plt.figure(num=1, figsize=(10, 8))      # The first number in figsize is the width, the second is the length
+plt.figure(num=1, figsize=(20, 16))      # The first number in figsize is the width, the second is the length
 
+# Draw the network with the Digraph, spring_layout and options included
 nx.draw_networkx(G, pos, **options)
 
 # Set margins for the axes so that nodes aren't clipped ???
@@ -60,3 +62,8 @@ ax = plt.gca()
 ax.margins(0, 0)
 plt.axis("off")     # No X or Y axis will be shown
 plt.show()          # Will show the figure
+
+# TODO: zorgen dat de bolletjes, zich groter/ kleiner maken afhankelijk van hoe belangrijk ze zijn
+# TODO: lijntjes een andere kleur geven afhankelijk van iets
+# TODO: Misschien de pijltjes een beetje meer zichbaar maken
+# TODO: De naam van belangrijke mensen groter maken
