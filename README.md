@@ -1,6 +1,8 @@
 # networkx
-networkx and social media code
+networkx combined with NodeXL Excel program
 
-Deze vullen op het einde
+Things to watch out for:
 
-Dat van de excel van het hebben van de csv op de juiste stand moet erin staan
+Make sure that the delimiter of the Excel version you use is a comma, not a semicolon. 
+Otherwise, pandas will not be able to read the code.
+
