@@ -46,4 +46,10 @@ We will be using a DiGraph, why? Because we do not allow for more than one conne
 (line) between two nodes, but the connections between the nodes are directional from
 one node to another, so there is an arrow pointing from one node to another.
 
+# Layout
+For layouts, you have a wide variety of layouts to choose from, we choose the spring
+layout this because it shows what we want to show. The most tweeted about, retweeted,
+commented on, etc. persons are in the middle. The spring layout highlights the nodes
+that are most interesting for us to look at in this type of network.
+
 

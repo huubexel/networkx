@@ -1,10 +1,11 @@
 import pandas as pd
 import networkx as nx
+import scipy
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 # Specify where the file is
-filepath = './csgo100.csv'
+filepath = './csgo2000.csv'
 
 # Read in the csv file with pandas
 df = pd.read_csv(
