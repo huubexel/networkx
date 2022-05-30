@@ -3,7 +3,7 @@ import networkx as nx
 from matplotlib import pyplot, patches
 
 # Specify where the file is
-filepath = './csgo2000.csv'
+filepath = './csgo500.csv'
 
 # Read in the csv file with pandas
 df = pd.read_csv(
@@ -84,9 +84,40 @@ def set_color_and_importance_measure(betw, pos_nodes, graph):
         final_list.append(color)
 
     return final_list
-
-
 # IK BEN ERACHTER GEKOMEN ALS B HOGER DAN 0 IS, DAN IS D AUTOMATISCH HOGER DAN 0
+
+
+def nodes_size(importance_list):
+    final_list = []
+    for importance in importance_list:
+        if importance == "#9600FF" or importance == "#0CFF14":
+            size = 300
+        elif importance == "#BC5EFF" or importance == "#66FF6B":
+            size = 220
+        elif importance == "#D294FF" or importance == "#A3FFA6":
+            size = 150
+        else:
+            size = 60
+        final_list.append(size)
+
+    return final_list
+
+
+def font_sizes(importance_list):
+    final_list = []
+    for importance in importance_list:
+        if importance == 300:
+            size = 40
+        elif importance == 220:
+            size = 30
+        elif importance == 150:
+            size = 20
+        else:
+            size = 5
+        final_list.append(size)
+
+    return final_list
+
 
 # Calculate in degree centrality
 in_deg_cent = nx.in_degree_centrality(G)
@@ -109,13 +140,20 @@ ax.set_title('CSGO network')  # Set a title
 
 # get node color and the color is also an importance measure here
 color_list = set_color_and_importance_measure(betweenness, pos, G)
+node_size_list = nodes_size(color_list)
+font_size_list = font_sizes(node_size_list)
+
+counter = 0
+for node, (x, y) in pos.items():
+    print(font_size_list[counter])
+    pyplot.text(x, y, node, fontsize=font_size_list[counter], ha='center', va='center')
+    counter += 1
 
 nx.draw_networkx_edges(G, pos, alpha=0.1)  # Alpha is how see-through the edges will be
 nx.draw_networkx_labels(G, pos, font_size=0)
 nx.draw_networkx_nodes(
     G,
     pos,
-    node_size=100,                    # een lijst geven met voor elke node een value
     node_color=color_list     # een lijst geven voor elke node een kleur
 )
 
@@ -123,10 +161,6 @@ ax.margins(0, 0)
 ax.axis("off")          # No X or Y axis will be shown
 pyplot.show()           # Will show the figure
 
-# Voor binnen de -0.5 en 0.5 is betweenness belangrijk en daarbuiten is het belangrijk hoeveel mensen er op je
-# gecomment, getagd hebben enzo, hoeveel edges er naar je wijzen
-
-# TODO: zorgen dat de bolletjes, zich groter/ kleiner maken afhankelijk van hoe belangrijk ze zijn
-# TODO: De naam van belangrijke mensen groter maken
+# TODO: post more and clearer comments and add more text to the readme
 
 
