@@ -52,4 +52,10 @@ layout this because it shows what we want to show. The most tweeted about, retwe
 commented on, etc. persons are in the middle. The spring layout highlights the nodes
 that are most interesting for us to look at in this type of network.
 
+UITLEG HIERVAN AANPASSEN, DIE IN HET MIDDEN ZIJN NIET HET BELANGRIJKST, DAT ZIJN 
+SLECHTS DE LINKS TUSSEN MENSEN
+
+## Spectrum
+The spectrum goes from -1 to 1 on the x-axis and same for the y-axis
+
 
