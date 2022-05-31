@@ -60,6 +60,7 @@ The spectrum goes from -1 to 1 on the x-axis and same for the y-axis. It also ha
 to be that the middle is within -0.5 and 0.5 for both the x- and y-axis.
 
 # Part 2, social ranking words
+## Social Ranking
 ### Low social ranking
 People with low social ranking tend to use more I-words, these words are: I, me and my.
 
@@ -67,5 +68,11 @@ People with low social ranking tend to use more I-words, these words are: I, me 
 People with high ranking tend to use more we-words, these words are: we, us, our.
 
 ### In writing, high social ranking
-People who use pronouns like you and your tend to be of higher status when it comes to written
-and spoken conversations.
+People who use pronouns like "you" and "your" tend to be of higher status when it 
+comes to written and spoken conversations.
+
+## Global Reaching Centrality
+Difference between the local reaching centrality of the node that we look at right
+now and the node which scores the highest on local reaching centrality out of all the
+nodes. You look at this for every single node and take the average of those scores
+and that is the global reaching centrality

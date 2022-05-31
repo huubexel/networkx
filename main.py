@@ -1,6 +1,7 @@
 import pandas as pd
 import networkx as nx
-from matplotlib import pyplot, patches
+from matplotlib import pyplot
+from nltk.tokenize import word_tokenize
 # TODO: post more and clearer comments and add more text to the readme
 
 
@@ -49,7 +50,10 @@ def calc_centrality_measures(g):
     # Calculate closeness
     closeness = nx.closeness_centrality(g)
 
-    return in_deg_cent, out_deg_cent, betweenness, closeness, g
+    # Calculate harmonic centrality
+    global_reaching_centrality = nx.global_reaching_centrality(g)
+
+    return in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, g
 
 
 def make_plot(g):
@@ -62,13 +66,13 @@ def make_plot(g):
     return pos, ax
 
 
-def set_color_and_importance_measure(betw, pos_nodes, g):
-    betweenness_list = []
+def set_color_and_importance_measure(centrality_measure, pos_nodes, g):
+    centrality_measure_list = []
     degree_list = []
     final_list = []
 
     # Get node with the highest betweenness
-    highest_betweenness = max(betw.values())
+    highest_betweenness = max(centrality_measure.values())
 
     # filling the two lists for later use
     for node in pos_nodes:
@@ -80,16 +84,16 @@ def set_color_and_importance_measure(betw, pos_nodes, g):
             degree_list.append(0)
 
         # filling the betweenness list for later
-        if betw[node] != 0:
-            betweenness_list.append(betw[node] / highest_betweenness)
+        if centrality_measure[node] != 0:
+            centrality_measure_list.append(centrality_measure[node] / highest_betweenness)
         else:
-            betweenness_list.append(0)
+            centrality_measure_list.append(0)
 
     # Get the highest degree
     highest_degree = max(degree_list)
 
     for node in range(len(pos_nodes)):
-        b_score = betweenness_list[node]
+        b_score = centrality_measure_list[node]
         d_score = 0
         if degree_list[node] != 0:
             d_score = degree_list[node] / highest_degree
@@ -180,10 +184,55 @@ def create_networkx(g, pos, ax, color_list):
 # TODO: post more and clearer comments and add more text to the readme
 
 
+def calc_social_words_per_tweet(tweet_lib):
+    social_ranking_words_dict = {}
+
+    i_words = ["i", "I", "me", "Me", "my", "My"]
+    i_words_set = set()
+    we_you_words = ["we", "We", "us", "Us", "our", "Our", "you", "You", "your", "Your"]
+    we_you_words_set = set()
+    for i in range(len(i_words)):
+        i_words_set.add(i_words[i])
+    for i in range(len(we_you_words)):
+        we_you_words_set.add(we_you_words[i])
+
+    for user_and_tweet in tweet_lib.items():
+        i_words_counter = 0
+        we_you_words_counter = 0
+
+        tokenized_tweet = word_tokenize(user_and_tweet[1])
+        for word in tokenized_tweet:
+            if word in i_words_set:
+                i_words_counter += 1
+            elif word in we_you_words_set:
+                we_you_words_counter += 1
+
+        social_ranking_words_dict[user_and_tweet[0]] = {
+            "i_words_count": i_words_counter,
+            "i_words_prop": calc_proportion(i_words_counter, user_and_tweet[1]),
+            "we_you_words_count": we_you_words_counter,
+            "we_you_words_prop": calc_proportion(we_you_words_counter, user_and_tweet[1]),
+            "tweet": user_and_tweet[1]
+        }
+
+    return social_ranking_words_dict
+
+
+def calc_proportion(counter, tweet):
+    return counter / len(tweet)
+
+
+def linguistic_status(srw_dict):
+    linguistic_status_dict = {}
+    for key_and_value in srw_dict.items():
+        linguistic_status_dict[key_and_value[0]] = 0.5 + key_and_value[1]['we_you_words_prop'] - key_and_value[1]['i_words_prop']
+    return linguistic_status_dict
+
+
 def part1(g):
-    in_deg_cent, out_deg_cent, betweenness, closeness, graph = calc_centrality_measures(g)
+    in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, graph = calc_centrality_measures(g)
     pos, ax = make_plot(graph)
-    color_list = set_color_and_importance_measure(betweenness, pos, graph)
+    color_list = set_color_and_importance_measure(in_deg_cent, pos, graph)
     node_size_list = nodes_size(color_list)
     font_size_list = font_sizes(node_size_list)
     set_font_size(pos, font_size_list)
@@ -191,7 +240,8 @@ def part1(g):
 
 
 def part2(tw_lib):
-    pass
+    s_r_w_dict = calc_social_words_per_tweet(tw_lib)
+    ling_stat_dict = linguistic_status(s_r_w_dict)
 
 
 def main():
