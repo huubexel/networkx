@@ -40,19 +40,25 @@ def prepare_data():
 def calc_centrality_measures(g):
     # Calculate in degree centrality
     in_deg_cent = nx.in_degree_centrality(g)
+    # print(in_deg_cent)
 
     # Calculate out degree centrality
     out_deg_cent = nx.out_degree_centrality(g)
+    # print("\n\n\n\n")
+    # print(out_deg_cent)
 
     # Calculate betweenness
     betweenness = nx.betweenness_centrality(g)
+    # print("\n\n\n\n")
+    # print(betweenness)
 
     # Calculate closeness
     closeness = nx.closeness_centrality(g)
+    # print("\n\n\n\n")
+    # print(closeness)
 
     # Calculate harmonic centrality
     global_reaching_centrality = nx.global_reaching_centrality(g)
-    print(global_reaching_centrality)
 
     return in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, g
 
@@ -230,6 +236,38 @@ def linguistic_status(srw_dict):
     return linguistic_status_dict
 
 
+def get_highest_and_lowest(l_s_dict, in_deg, out_deg, between, close):
+    lowest = 1
+    highest = 0
+    name_lowest = ""
+    name_highest = ""
+    for user_and_score in l_s_dict.items():
+        if user_and_score[1] > highest:
+            if user_and_score[0] != "drmrainclouds":
+                highest = user_and_score[1]
+                name_highest = user_and_score[0]
+        if user_and_score[1] < lowest:
+            lowest = user_and_score[1]
+            name_lowest = user_and_score[0]
+
+    return name_highest, highest, between[name_highest], close[name_highest], in_deg[name_highest], out_deg[name_highest], name_lowest, lowest, between[name_lowest], close[name_lowest], in_deg[name_lowest], out_deg[name_lowest]
+
+
+def print_lowest_and_highest(name_highest, highest_ling_score, between_highest, close_highest, in_deg_highest, out_deg_highest, name_lowest, lowest_ling_score, between_lowest, close_lowest, in_deg_lowest, out_deg_lowest):
+    print(name_highest)
+    print("{0} highest ling_score".format(highest_ling_score))
+    print("{0} highest betweenness".format(between_highest))
+    print("{0} highest closeness".format(close_highest))
+    print("{0} highest in_degree".format(in_deg_highest))
+    print("{0} highest out_degree".format(out_deg_highest))
+    print(name_lowest)
+    print("{0} lowest ling_score".format(lowest_ling_score))
+    print("{0} lowest betweenness".format(between_lowest))
+    print("{0} lowest closeness".format(close_lowest))
+    print("{0} lowest in_degree".format(in_deg_lowest))
+    print("{0} lowest out_degree".format(out_deg_lowest))
+
+
 def part1(g):
     in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, graph = calc_centrality_measures(g)
     pos, ax = make_plot(graph)
@@ -238,17 +276,20 @@ def part1(g):
     font_size_list = font_sizes(node_size_list)
     set_font_size(pos, font_size_list)
     create_networkx(graph, pos, ax, color_list)
+    return in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality
 
 
-def part2(tw_lib):
+def part2(tw_lib, in_deg, out_deg, between, close, grc):
     s_r_w_dict = calc_social_words_per_tweet(tw_lib)
     ling_stat_dict = linguistic_status(s_r_w_dict)
+    name_highest, highest_ling_score, between_highest, close_highest, in_deg_highest, out_deg_highest, name_lowest, lowest_ling_score, between_lowest, close_lowest, in_deg_lowest, out_deg_lowest = get_highest_and_lowest(ling_stat_dict, in_deg, out_deg, between, close)
+    print_lowest_and_highest(name_highest, highest_ling_score, between_highest, close_highest, in_deg_highest, out_deg_highest, name_lowest, lowest_ling_score, between_lowest, close_lowest, in_deg_lowest, out_deg_lowest)
 
 
 def main():
     g, tweet_library = prepare_data()
-    part1(g)
-    part2(tweet_library)
+    in_deg, out_deg, between, close, grc = part1(g)
+    part2(tweet_library, in_deg, out_deg, between, close, grc)
 
 
 if __name__ == "__main__":
