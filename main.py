@@ -52,6 +52,7 @@ def calc_centrality_measures(g):
 
     # Calculate harmonic centrality
     global_reaching_centrality = nx.global_reaching_centrality(g)
+    print(global_reaching_centrality)
 
     return in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, g
 
@@ -232,7 +233,7 @@ def linguistic_status(srw_dict):
 def part1(g):
     in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, graph = calc_centrality_measures(g)
     pos, ax = make_plot(graph)
-    color_list = set_color_and_importance_measure(in_deg_cent, pos, graph)
+    color_list = set_color_and_importance_measure(betweenness, pos, graph)
     node_size_list = nodes_size(color_list)
     font_size_list = font_sizes(node_size_list)
     set_font_size(pos, font_size_list)

@@ -75,4 +75,7 @@ comes to written and spoken conversations.
 Difference between the local reaching centrality of the node that we look at right
 now and the node which scores the highest on local reaching centrality out of all the
 nodes. You look at this for every single node and take the average of those scores
-and that is the global reaching centrality
+and that is the global reaching centrality.
+TLDR: This score is the percentage of nodes that you can reach from the current node,
+and this is an average of all nodes. So the average node can go to 4.8% of the other
+nodes.
