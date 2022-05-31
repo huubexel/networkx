@@ -3,7 +3,7 @@ import networkx as nx
 from matplotlib import pyplot, patches
 
 # Specify where the file is
-filepath = './csgo500.csv'
+filepath = './csgo2000.csv'
 
 # Read in the csv file with pandas
 df = pd.read_csv(
@@ -145,7 +145,6 @@ font_size_list = font_sizes(node_size_list)
 
 counter = 0
 for node, (x, y) in pos.items():
-    print(font_size_list[counter])
     pyplot.text(x, y, node, fontsize=font_size_list[counter], ha='center', va='center')
     counter += 1
 
@@ -159,6 +158,7 @@ nx.draw_networkx_nodes(
 
 ax.margins(0, 0)
 ax.axis("off")          # No X or Y axis will be shown
+pyplot.savefig("network.png")
 pyplot.show()           # Will show the figure
 
 # TODO: post more and clearer comments and add more text to the readme
