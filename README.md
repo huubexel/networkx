@@ -40,7 +40,6 @@ If the Graph does not include 'Multi', it means that it is not possible to have
 multiple connections (lines) between the 2 nodes. So there will be just one connection
 (line) between the 2 nodes.
 
-
 ### What Graph are we using?
 We will be using a DiGraph, why? Because we do not allow for more than one connection
 (line) between two nodes, but the connections between the nodes are directional from
@@ -48,14 +47,14 @@ one node to another, so there is an arrow pointing from one node to another.
 
 # Layout
 For layouts, you have a wide variety of layouts to choose from, we choose the spring
-layout this because it shows what we want to show. The most tweeted about, retweeted,
-commented on, etc. persons are in the middle. The spring layout highlights the nodes
-that are most interesting for us to look at in this type of network.
-
-UITLEG HIERVAN AANPASSEN, DIE IN HET MIDDEN ZIJN NIET HET BELANGRIJKST, DAT ZIJN 
-SLECHTS DE LINKS TUSSEN MENSEN
+layout, this because it shows what we want to show. The most tweeted about, retweeted,
+commented on, etc. persons are on the outskirts and quite hard to reach (made green).
+The spring layout highlights the nodes that are most interesting for us to look at 
+in this type of network. The people that are in the middle and that are purple are
+the people who know these more famous individuals, they are links to other these 
+more famous and well know persons, with this kind of layout, we try to highlight 
+those persons (links to more famous individuals).
 
 ## Spectrum
-The spectrum goes from -1 to 1 on the x-axis and same for the y-axis
-
-
+The spectrum goes from -1 to 1 on the x-axis and same for the y-axis. It also happens
+to be that the middle is within -0.5 and 0.5 for both the x- and y-axis.
