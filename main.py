@@ -40,22 +40,15 @@ def prepare_data():
 def calc_centrality_measures(g):
     # Calculate in degree centrality
     in_deg_cent = nx.in_degree_centrality(g)
-    # print(in_deg_cent)
 
     # Calculate out degree centrality
     out_deg_cent = nx.out_degree_centrality(g)
-    # print("\n\n\n\n")
-    # print(out_deg_cent)
 
     # Calculate betweenness
     betweenness = nx.betweenness_centrality(g)
-    # print("\n\n\n\n")
-    # print(betweenness)
 
     # Calculate closeness
     closeness = nx.closeness_centrality(g)
-    # print("\n\n\n\n")
-    # print(closeness)
 
     # Calculate harmonic centrality
     global_reaching_centrality = nx.global_reaching_centrality(g)
@@ -132,7 +125,6 @@ def set_color_and_importance_measure(centrality_measure, pos_nodes, g):
         final_list.append(color)
 
     return final_list
-# IK BEN ERACHTER GEKOMEN ALS B HOGER DAN 0 IS, DAN IS D AUTOMATISCH HOGER DAN 0
 
 
 def nodes_size(importance_list):
@@ -187,8 +179,6 @@ def create_networkx(g, pos, ax, color_list):
     ax.axis("off")          # No X or Y axis will be shown
     pyplot.savefig("network.png")
     pyplot.show()           # Will show the figure
-
-# TODO: post more and clearer comments and add more text to the readme
 
 
 def calc_social_words_per_tweet(tweet_lib):
