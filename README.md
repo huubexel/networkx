@@ -58,3 +58,14 @@ those persons (links to more famous individuals).
 ## Spectrum
 The spectrum goes from -1 to 1 on the x-axis and same for the y-axis. It also happens
 to be that the middle is within -0.5 and 0.5 for both the x- and y-axis.
+
+# Part 2, social ranking words
+### Low social ranking
+People with low social ranking tend to use more I-words, these words are: I, me and my.
+
+### High social ranking
+People with high ranking tend to use more we-words, these words are: we, us, our.
+
+### In writing, high social ranking
+People who use pronouns like you and your tend to be of higher status when it comes to written
+and spoken conversations.
