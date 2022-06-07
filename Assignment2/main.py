@@ -34,6 +34,7 @@ def main():
 
 
     # Q1 tijd tussen antwoorden en totale tijd voor het verkrijgen van bijv een antwoord
+    # Huub
 
     # Q2 hoeveelheid woorden nodig per interface, en dan ook kijken naar verschil per persoon
     # Rutger
