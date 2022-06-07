@@ -66,7 +66,7 @@ def make_plot(g):
     return pos, ax
 
 
-def set_color_and_importance_measure(centrality_measure, pos_nodes, g):
+def set_color_centrality_and_importance_measure(centrality_measure, pos_nodes, g):
     centrality_measure_list = []
     degree_list = []
     final_list = []
@@ -93,38 +93,82 @@ def set_color_and_importance_measure(centrality_measure, pos_nodes, g):
     highest_degree = max(degree_list)
 
     for node in range(len(pos_nodes)):
-        b_score = centrality_measure_list[node]
+        centrality_score = centrality_measure_list[node]
         d_score = 0
         if degree_list[node] != 0:
             d_score = degree_list[node] / highest_degree
 
         # If both have a score higher than 0 (purple)
-        if b_score > 0 and d_score > 0:
-            combined_score = (b_score + d_score) / 2
-            if combined_score > 0.5:
-                color = "#9600FF"
-            elif combined_score > 0.2:
-                color = "#BC5EFF"
-            elif combined_score > 0.1:
-                color = "#D294FF"
-            else:
-                color = "#E7C4FF"
+        if centrality_score > 0:  # and d_score > 0""" :
+            color = purple_coloring(centrality_score + d_score / 2)
 
         # degree, importance (green)
         elif d_score > 0:
-            if d_score > 0.5:
-                color = "#0CFF14"
-            elif d_score > 0.3:
-                color = "#66FF6B"
-            elif d_score > 0.1:
-                color = "#A3FFA6"
-            else:
-                color = "#E8FEEA"
+            #color = degree_coloring(d_score)
+            color = "#FAFAFA"
         else:
             color = "#FAFAFA"
         final_list.append(color)
 
     return final_list
+
+
+def part_e(centrality_measure, pos_nodes, status):
+    centrality_measure_dict = {}
+    final_list = []
+
+    highest_centrality_set = set()
+    # Get node with the highest betweenness
+    for name_and_value in centrality_measure.items():
+        highest_centrality_set.add(name_and_value[1])
+    highest_centrality = max(highest_centrality_set)
+
+    for name_and_pos in pos_nodes.items():
+
+        # filling the betweenness list for later
+        if centrality_measure[name_and_pos[0]] != 0:
+            centrality_measure_dict[name_and_pos[0]] = (centrality_measure[name_and_pos[0]] / highest_centrality)
+        else:
+            centrality_measure_dict[name_and_pos[0]] = 0
+
+    for name_value in centrality_measure_dict.items():
+        if name_value[0] in status:
+            if status[name_value[0]] > 0.5:
+                color = purple_coloring(status[name_value[0]])
+            elif status[name_value[0]] < 0.5:
+                color = degree_coloring(status[name_value[0]])
+            else:
+                color = "#FAFAFA"
+            final_list.append(color)
+        else:
+            final_list.append("#FAFAFA")
+
+    return final_list
+
+
+def purple_coloring(score):
+    # hoog is paars
+    if score > 0.52:
+        color = "#9600FF"
+    elif score > 0.51:
+        color = "#BC5EFF"
+    elif score > 0.5:
+        color = "#D294FF"
+    else:
+        color = "#E7C4FF"
+    return color
+
+
+def degree_coloring(degree):
+    # laag is groen
+    if degree < 0.49:
+        return "#0CFF14"
+    elif degree < 0.495:
+        return "#66FF6B"
+    elif degree < 0.50:
+        return "#A3FFA6"
+    else:
+        return "#E8FEEA"
 
 
 def nodes_size(importance_list):
@@ -258,28 +302,40 @@ def print_lowest_and_highest(name_highest, highest_ling_score, between_highest, 
     print("{0} lowest out_degree".format(out_deg_lowest))
 
 
-def part1(g):
-    in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, graph = calc_centrality_measures(g)
-    pos, ax = make_plot(graph)
-    color_list = set_color_and_importance_measure(betweenness, pos, graph)
+def wrapper(centrality_measure, pos, graph, ax, ling_status):
+    color_list = part_e(centrality_measure, pos, ling_status)
     node_size_list = nodes_size(color_list)
     font_size_list = font_sizes(node_size_list)
     set_font_size(pos, font_size_list)
     create_networkx(graph, pos, ax, color_list)
-    return in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality
 
 
-def part2(tw_lib, in_deg, out_deg, between, close, grc):
+def part1(g):
+    in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, graph = calc_centrality_measures(g)
+    pos, ax = make_plot(graph)
+    # color_list = set_color_centrality_and_importance_measure(closeness, pos, graph)
+    # color_list = part_e(closeness, pos)
+    # node_size_list = nodes_size(color_list)
+    # font_size_list = font_sizes(node_size_list)
+    # set_font_size(pos, font_size_list)
+    # create_networkx(graph, pos, ax, color_list)
+    return in_deg_cent, out_deg_cent, betweenness, closeness, global_reaching_centrality, ax, pos
+
+
+def part2(tw_lib, in_deg, out_deg, between, close, grc, g, ax, pos):
     s_r_w_dict = calc_social_words_per_tweet(tw_lib)
     ling_stat_dict = linguistic_status(s_r_w_dict)
     name_highest, highest_ling_score, between_highest, close_highest, in_deg_highest, out_deg_highest, name_lowest, lowest_ling_score, between_lowest, close_lowest, in_deg_lowest, out_deg_lowest = get_highest_and_lowest(ling_stat_dict, in_deg, out_deg, between, close)
     print_lowest_and_highest(name_highest, highest_ling_score, between_highest, close_highest, in_deg_highest, out_deg_highest, name_lowest, lowest_ling_score, between_lowest, close_lowest, in_deg_lowest, out_deg_lowest)
 
+    # Hier iets doen om te comparen met de linguistic status
+    wrapper(out_deg, pos, g, ax, ling_stat_dict)
+
 
 def main():
     g, tweet_library = prepare_data()
-    in_deg, out_deg, between, close, grc = part1(g)
-    part2(tweet_library, in_deg, out_deg, between, close, grc)
+    in_deg, out_deg, between, close, grc, ax, pos = part1(g)
+    part2(tweet_library, in_deg, out_deg, between, close, grc, g, ax, pos)
 
 
 if __name__ == "__main__":
