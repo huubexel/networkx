@@ -1,31 +1,28 @@
 import os
-import re
 
+
+# this function get the data and turns it into an  dict sucht that
+# each conversation has its own key, whilst the value is another
+# dict wich consists of 4 keys each representing one of the four
+# files with set files within the values
 def get_data():
-    """
-    file_key is f.e. LLLL9_S2976765
-    file_type is 'o', 't', 's' or 'w'
-    :return: data = {file_key: {file_type: content from file}}
-    In every value are 4 filetypes and 4 contents from files
-    """
-    file_names = os.listdir('./data')
+    file_names = os.listdir('data')
     data = {}
     while file_names != []:
         file_name = file_names.pop()
         file_list = file_name.split('_')
-        file_key = "_".join(file_list[2:4])  # This is the first 2 things after cie_ so f.e. LLLL9_S2976765
+        file_key = "_".join(file_list[2:4])
         file_type = file_list[4]
         with open("data/" + file_name) as f:
             text = f.read()
         if file_key in data.keys():
-            if file_type in data[file_key].keys():  # If this triggers, you have a duplicate in your data
+            if file_type in data[file_key].keys():
                 print(file_name)
                 print(data[file_key][file_type])
             else:
                 data[file_key][file_type] = text
         else:
-            data[file_key] = {file_type: text}
-
+            data[file_key] = {file_type:text}
     return data
 
 
@@ -39,15 +36,14 @@ def splitpoint(data):
         if '_' not in interface_list[:100]:
             for i in range(len(interface_list)):
                 if interface_list[i] == '_':
-                    new_data[key]['split'] = [i, "inter1"]
+                    new_data[key]['split'] = [i,"inter1"]
                     break
         else:
-            for i in range(1, len(interface_list)+1):
+            for i in range(1,len(interface_list)+1):
                 if interface_list[-i] == '_':
-                    new_data[key]['split'] = [len(interface_list) - i, "inter2"]
+                    new_data[key]['split'] = [len(interface_list) - i,"inter2"]
                     break
     return new_data
-
 
 # Q1. Which interface is the most efficient?
 # Define a measure of efficiency and compare both interfaces in a suitable graph
@@ -70,7 +66,7 @@ def Q1andQ2(data,Q):
             turn = 's'
         for i in range(len(data_list)):
             if i < data[key]['split'][0]:
-                if data[key]['split'][0] == True:
+                if data[key]['split'][1] == "inter2":
                     total_length_double += 1
                     if data_list[i] == "" and turn == 's':
                         total_switches_double += 1
@@ -87,7 +83,7 @@ def Q1andQ2(data,Q):
                         total_switches_single += 1
                         turn = 's'
             else:
-                if data[key]['split'][0] == True:
+                if data[key]['split'][1] == "inter2":
                     total_length_single += 1
                     if data_list[i] == "" and turn == 's':
                         total_switches_single += 1
@@ -114,16 +110,11 @@ def Q1andQ2(data,Q):
         print("Q2:\nInterface 1 had an average of {0} words between switches".format(round(avg_length_single,4)))
         print("Interface 2 had an average of {0} words between switches".format(round(avg_length_double,4)))
 
-
 # turns a conversation dict into two list containing all words typed by
 # both participants.
 def word_string(file_dict):
     self_total = file_dict['s'].split("¦")
     other_total = file_dict['o'].split("¦")
-    self_inter1 = ""
-    self_inter2 = ""
-    other_inter1 = ""
-    other_inter2 = ""
     if file_dict["split"][1] == "inter1":
         self_inter1 = "".join(self_total[:file_dict["split"][0]])
         self_inter2 = "".join(self_total[file_dict["split"][0]:])
@@ -142,7 +133,7 @@ def word_string(file_dict):
 # A4 use wordlist with happy words, and compare the average amount of
 # happy words per word.
 def Q4(data):
-    with open("./happy_words.txt") as f:
+    with open("happy_words.txt") as f:
         happy_words = f.read().split("\n")
     inter1_happy_words_total = 0
     inter2_happy_words_total = 0
@@ -160,92 +151,8 @@ def Q4(data):
         for word in inter2_words:
             if word in happy_words:
                 inter2_happy_words_total += 1
-    print("Q4:\nInterface 1 has an average of {0} happy words per word".format(round(inter1_happy_words_total/inter1_words_total, 4)))
-    print("Interface 2 has an average of {0} happy words per word".format(round(inter2_happy_words_total/inter2_words_total, 4)))
-
-
-def Q3andQ5(data, which_q):
-    for file_key, sort_and_text in data.items():
-        if 'o' in sort_and_text.keys():
-            full_word_set_s, split_data_s = create_workable_text(sort_and_text["s"])
-            full_word_set_o, split_data_o = create_workable_text(sort_and_text["o"])
-
-            if which_q == "q3":
-                percentage_s_being_checked = word_checker(split_data_s, split_data_o)
-                percentage_o_being_checked = word_checker(split_data_o, split_data_s)
-
-                print(percentage_s_being_checked)
-                print(percentage_o_being_checked)
-                print()
-            elif which_q == "q5":
-                with open("./happy_words.txt") as f:
-                    positive_emotions = f.read().split("\n")
-                    lowered_positive_emotions = [pos_em.lower() for pos_em in positive_emotions]
-                with open("./negative_emotions.txt") as f:
-                    negative_emotions = f.read().split("\n")
-                    lowered_negative_emotions = [neg_em.lower() for neg_em in negative_emotions]
-                oec_s, sec_s = emotion_checker(split_data_s, split_data_o, set(lowered_positive_emotions),
-                                               set(lowered_negative_emotions))
-                oec_o, sec_o = emotion_checker(split_data_o, split_data_s, set(lowered_positive_emotions),
-                                               set(lowered_negative_emotions))
-                print(
-                    "amount of same emotions s compared to o: {0}, amount of other emotions s compared to o: {1},".format(
-                        sec_s, oec_s))
-                print(
-                    "amount of same emotions o compared to s: {0}, amount of other emotions o compared to s: {1},".format(
-                        sec_o, oec_o))
-
-
-def emotion_checker(split_data_being_checked, split_data_checked_on, positive_emotions, negative_emotions):
-    same_emotion_counter = 0
-    other_emotion_counter = 0
-    last_emotion = ""
-    word_counter = 0
-    for word in split_data_being_checked:
-        try:
-            if split_data_checked_on[word_counter] in negative_emotions:
-                last_emotion = "negative"
-            elif split_data_checked_on[word_counter] in positive_emotions:
-                last_emotion = "positive"
-
-            if last_emotion == "negative":
-                if word.lower() in negative_emotions:
-                    same_emotion_counter += 1
-                elif word.lower() in positive_emotions:
-                    other_emotion_counter += 1
-            elif last_emotion == "positive":
-                if word.lower() in positive_emotions:
-                    same_emotion_counter += 1
-                elif word.lower() in negative_emotions:
-                    other_emotion_counter += 1
-            word_counter += 1
-        except IndexError:
-            return other_emotion_counter, same_emotion_counter
-
-    return other_emotion_counter, same_emotion_counter
-
-
-def word_checker(split_data_being_checked, split_data_checked_on):
-    used_words = set()
-    word_counter = 0  # this counts how many words there have been checked
-    same_words_counter = 0
-    for word in split_data_being_checked:
-        try:
-            used_words.add(split_data_checked_on[word_counter])
-            if word in used_words:
-                same_words_counter += 1
-            word_counter += 1
-        except IndexError:
-            return same_words_counter / len(split_data_being_checked)
-
-    return same_words_counter / len(split_data_being_checked)
-
-
-def create_workable_text(data):
-    split_data = "".join(data.split("¦"))
-    clean_data = re.sub('/[sd]+', ' ', split_data)
-    return set(clean_data.split()), clean_data.split()
-
+    print("Q4:\nInterface 1 has an average of {0} happy words per word".format(round(inter1_happy_words_total/inter1_words_total,4)))
+    print("Interface 2 has an average of {0} happy words per word".format(round(inter2_happy_words_total/inter2_words_total,4)))
 
 
 # Q6: Although the datafiles do not contain explicit information
@@ -257,11 +164,12 @@ def create_workable_text(data):
 # one with disconformation words. we count the amount of words in the
 # s file. We estimate that this wil be about the amount
 # of correct and incorrect guesses. Since we made these list ourself,
-# so they are probably not complete
+# so they are probably not complete 
+
 def Q6(data):
-    with open("./conformation_words.txt") as f:
+    with open("conformation_words.txt") as f:
         correct_words = f.read().split("\n")
-    with open("./disconformation_words.txt") as f:
+    with open("disconformation_words.txt") as f:
         false_words = f.read().split("\n")
     inter1_correct_words_total = 0
     inter2_correct_words_total = 0
@@ -275,7 +183,7 @@ def Q6(data):
             if word in correct_words:
                 inter1_correct_words_total += 1
             if word in false_words:
-                inter1_false_words_total += 1
+                inter1_false_words_total += 1   
         for word in inter2_words:
             if word in correct_words:
                 inter2_correct_words_total += 1
@@ -283,7 +191,6 @@ def Q6(data):
                 inter2_false_words_total += 1
     print("Q6:\nInterface 1 has {0} conformation words and {1} disconformation words.".format(inter1_correct_words_total,inter1_false_words_total))
     print("Interface 2 has {0} conformation words and {1} disconformation words.".format(inter2_correct_words_total,inter2_false_words_total))
-
 
 # Q7: Can you think of any other interesting measure(s)?
 # Define them and compare both interfaces in a suitable graph.
@@ -362,21 +269,30 @@ def Q7(data):
 
 
 def main():
-    raw_data = get_data()
-    data = splitpoint(raw_data)
-    Q1andQ2(data, 1)
-    print("")
-    Q1andQ2(data, 2)
-    print("")
-    Q3andQ5(data, "q3")
-    print("")
+    data = get_data()
+    data = splitpoint(data)
+    Q1andQ2(data,1)
+    Q1andQ2(data,2)
     Q4(data)
-    print("")
-    Q3andQ5(data, "q5")
-    print("")
     Q6(data)
-    print("")
     Q7(data)
+
+
+
+
+    # Q3 Je pakt de woorden van beide en gaat kijken welke de meeste overlap hebben.
+
+
+    # Q4 woordenlijst met vrolijke woorden en gaat kijken welke interface deze meer voorkomen.
+
+    # Q5 Woordenlijst met zowel vrolijke als niet vrolijke woorden en dan kijken welke meer gebruikt worden in welke
+    # dit ook met een percentage enzo.
+
+    # Q6 Je moet door die bestanden gaan en kijken welke woorden of signalen worden gebruikt om
+    # confirmatie aan te geven, en dan tegelijkertijd ook welke een fout antwoord aangeven (indien van toepassing)
+    # en als je iets tegenkomt dit in de buurt komt dan reken je dat.
+
+    # Q7
 
 
 if __name__ == "__main__":
