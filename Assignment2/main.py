@@ -29,7 +29,7 @@ def get_data():
     return data
 
 
-# This function determines the point whent the interface is changed.
+# This function determines the point when the interface is changed.
 # and adds a new key to the file dict with the index when the interface
 # switch and which interface comes first
 def splitpoint(data):
@@ -106,13 +106,13 @@ def Q1andQ2(data,Q):
     if Q == 1:
         avg_pres_single = total_switches_single/total_length_single
         avg_pres_double = total_switches_double/total_length_double
-        print("Q1:\nInterface 1 swithed on average {0} times per keypress".format(round(avg_pres_single,4)))
-        print("Interface 2 swithed on average {0} times per keypress".format(round(avg_pres_double,4)))
+        print("Q1:\nInterface 1 swithed on average {0} times per keypress.".format(round(avg_pres_single,4)))
+        print("Interface 2 swithed on average {0} times per keypress.".format(round(avg_pres_double,4)))
     elif Q == 2:
         avg_length_single = total_length_single/total_switches_single
         avg_length_double = total_length_double/total_switches_double
-        print("Q2:\nInterface 1 had an average of {0} words between switches".format(round(avg_length_single,4)))
-        print("Interface 2 had an average of {0} words between switches".format(round(avg_length_double,4)))
+        print("Q2:\nInterface 1 had an average of {0} words between switches.".format(round(avg_length_single,4)))
+        print("Interface 2 had an average of {0} words between switches.".format(round(avg_length_double,4)))
 
 
 # turns a conversation dict into two list containing all words typed by
@@ -160,41 +160,87 @@ def Q4(data):
         for word in inter2_words:
             if word in happy_words:
                 inter2_happy_words_total += 1
-    print("Q4:\nInterface 1 has an average of {0} happy words per word".format(round(inter1_happy_words_total/inter1_words_total, 4)))
-    print("Interface 2 has an average of {0} happy words per word".format(round(inter2_happy_words_total/inter2_words_total, 4)))
+    print("Q4:\nInterface 1 has an average of {0} happy words per word.".format(round(inter1_happy_words_total/inter1_words_total, 4)))
+    print("Interface 2 has an average of {0} happy words per word.".format(round(inter2_happy_words_total/inter2_words_total, 4)))
 
 
-def Q3andQ5(data, which_q):
+# full_word_set_s, split_data_s = create_workable_text(sort_and_text["s"])
+# full_word_set_o, split_data_o = create_workable_text(sort_and_text["o"])
+
+
+def q3(data):
+    data_counter = 0
+    percentage_interface1 = 0
+    percentage_interface2 = 0
     for file_key, sort_and_text in data.items():
-        if 'o' in sort_and_text.keys():
-            full_word_set_s, split_data_s = create_workable_text(sort_and_text["s"])
-            full_word_set_o, split_data_o = create_workable_text(sort_and_text["o"])
+        data_counter += 1
+        self_inter1, self_inter2, other_inter1, other_inter2 = word_string(data[file_key])
+        percentage_interface1 += word_checker(self_inter1.split(), other_inter1.split())
+        percentage_interface2 += word_checker(self_inter2.split(), other_inter2.split())
 
-            if which_q == "q3":
-                percentage_s_being_checked = word_checker(split_data_s, split_data_o)
-                percentage_o_being_checked = word_checker(split_data_o, split_data_s)
+    print("Q3:\nIn Interface 1 they copied each other’s language {0}% out of 100% on average."
+          .format(round((percentage_interface1 / data_counter) * 100, 4)))
+    print("In Interface 2 they copied each other’s language {0}% out of 100% on average."
+          .format(round((percentage_interface2 / data_counter) * 100, 4)))
 
-                print(percentage_s_being_checked)
-                print(percentage_o_being_checked)
-                print()
-            elif which_q == "q5":
-                with open("./happy_words.txt") as f:
-                    positive_emotions = f.read().split("\n")
-                    lowered_positive_emotions = [pos_em.lower() for pos_em in positive_emotions]
-                with open("./negative_emotions.txt") as f:
-                    negative_emotions = f.read().split("\n")
-                    lowered_negative_emotions = [neg_em.lower() for neg_em in negative_emotions]
-                oec_s, sec_s = emotion_checker(split_data_s, split_data_o, set(lowered_positive_emotions),
+
+def q5(data):
+    data_counter = 0
+
+    same_emotion_inter1 = 0
+    same_emotion_inter2 = 0
+    other_emotion_inter1 = 0
+    other_emotion_inter2 = 0
+
+    # opening happy en sad words lists
+    with open("./happy_words.txt") as f:
+        positive_emotions = f.read().split("\n")
+        lowered_positive_emotions = [pos_em.lower() for pos_em in positive_emotions]
+    with open("./negative_emotions.txt") as f:
+        negative_emotions = f.read().split("\n")
+        lowered_negative_emotions = [neg_em.lower() for neg_em in negative_emotions]
+
+    for file_key, sort_and_text in data.items():
+        data_counter += 1
+        self_inter1, self_inter2, other_inter1, other_inter2 = word_string(data[file_key])
+
+        se_inter1, oe_inter1 = emotion_checker(self_inter1.split(), other_inter1.split(),
+                                               set(lowered_positive_emotions),
                                                set(lowered_negative_emotions))
-                oec_o, sec_o = emotion_checker(split_data_o, split_data_s, set(lowered_positive_emotions),
-                                               set(lowered_negative_emotions))
-                print(
-                    "amount of same emotions s compared to o: {0}, amount of other emotions s compared to o: {1},".format(
-                        sec_s, oec_s))
-                print(
-                    "amount of same emotions o compared to s: {0}, amount of other emotions o compared to s: {1},".format(
-                        sec_o, oec_o))
+        same_emotion_inter1 += se_inter1
+        other_emotion_inter1 += oe_inter1
 
+        se_inter2, oe_inter2 = emotion_checker(self_inter2.split(), other_inter2.split(),
+                                               set(lowered_positive_emotions),
+                                               set(lowered_negative_emotions))
+        same_emotion_inter2 += se_inter2
+        other_emotion_inter2 += oe_inter2
+
+    print("Q5:\nAmount of same emotions in interface 1: {0}\nAmount of other emotions in interface 1: {1}"
+          .format(same_emotion_inter1, other_emotion_inter1))
+    print("Amount of same emotions in interface 2: {0}\nAmount of other emotions in interface 2: {1}"
+          .format(same_emotion_inter2, other_emotion_inter2))
+
+
+def word_checker(s, o):
+    used_words_s = set()
+    used_words_o = set()
+    same_words_counter = 0
+    for word_s, word_o in zip(s, o):
+        used_words_s.add(word_s)
+        used_words_o.add(word_o)
+        if word_s in used_words_o:
+            same_words_counter += 1
+        if word_o in used_words_s:
+            same_words_counter += 1
+
+    try:
+        return same_words_counter / (len(used_words_s) + len(used_words_o))
+    except ZeroDivisionError:
+        return 0.0
+
+
+# def emotion_checker(split_data_being_checked, split_data_checked_on, positive_emotions, negative_emotions):
 
 def emotion_checker(split_data_being_checked, split_data_checked_on, positive_emotions, negative_emotions):
     same_emotion_counter = 0
@@ -223,22 +269,6 @@ def emotion_checker(split_data_being_checked, split_data_checked_on, positive_em
             return other_emotion_counter, same_emotion_counter
 
     return other_emotion_counter, same_emotion_counter
-
-
-def word_checker(split_data_being_checked, split_data_checked_on):
-    used_words = set()
-    word_counter = 0  # this counts how many words there have been checked
-    same_words_counter = 0
-    for word in split_data_being_checked:
-        try:
-            used_words.add(split_data_checked_on[word_counter])
-            if word in used_words:
-                same_words_counter += 1
-            word_counter += 1
-        except IndexError:
-            return same_words_counter / len(split_data_being_checked)
-
-    return same_words_counter / len(split_data_being_checked)
 
 
 def create_workable_text(data):
@@ -365,17 +395,17 @@ def main():
     raw_data = get_data()
     data = splitpoint(raw_data)
     Q1andQ2(data, 1)
-    print("")
+    print()
     Q1andQ2(data, 2)
-    print("")
-    Q3andQ5(data, "q3")
-    print("")
+    print()
+    q3(data)
+    print()
     Q4(data)
-    print("")
-    Q3andQ5(data, "q5")
-    print("")
+    print()
+    q5(data)
+    print()
     Q6(data)
-    print("")
+    print()
     Q7(data)
 
 
