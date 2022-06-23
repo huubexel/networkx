@@ -212,7 +212,7 @@ def q5(data):
     with open("./happy_words.txt") as f:
         positive_emotions = f.read().split("\n")
         lowered_positive_emotions = [pos_em.lower() for pos_em in positive_emotions]
-    with open("./negative_emotions.txt") as f:
+    with open("./negative_words.txt") as f:
         negative_emotions = f.read().split("\n")
         lowered_negative_emotions = [neg_em.lower() for neg_em in negative_emotions]
 
